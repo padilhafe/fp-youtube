@@ -26,7 +26,7 @@ Nossos objetivos serão:
 **Configurando o primeiro Link**
 ```
 /ip address add interface=ether1 address=200.200.200.2/29
-/ipv6 address add interface=ether1 address=2001:0db8::2/126
+/ipv6 address add interface=ether1 address=2001:0db8:1::2/126
 
 /ip route add gateway=200.200.200.1
 /ip route add type=blackhole dst-address=200.200.200.0/29
