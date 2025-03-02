@@ -4,7 +4,7 @@
 # Configuração de Interface IP
 /ip address add address=200.200.200.1/29 interface=ether2
 
-/ipv6 address add address=2001:0db8::1/126 interface=ether2
+/ipv6 address add address=2001:0db8:1::1/126 interface=ether2
 /ipv6 route add dst-adress=gateway=2001:0db8:1:8::/48 gateway=2001:0db8::2
 
 # Configurações de NAT para o laboratório funcionar
