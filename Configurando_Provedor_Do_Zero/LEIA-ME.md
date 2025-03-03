@@ -12,6 +12,15 @@ As configurações gerais do nosso ambiente serão:
 - Rede DHCP: 172.16.0.0/24
 
 ---
+## Parte 0 - Configurações fixas
+Antes de iniciarmos o laboratório, precisamos configurar os equipamentos que terão configuração de rede fixa, que são:
+- Provedor 01, 02 e 03
+- SwitchCore 01 e 02
+- OLT 01 e 02
+- Cliente PPPoE 01 e 02
+- Nomes das interfaces de redes de todos os nós
+
+Para isso, bastará copiarmos a configuração presente no diretório `base_configs` para seus respectivos nós. Apenas atente-se para substituir o endereço IP da interface ether1 do provedor 01 e 02 para um endereço roteável na sua rede. Caso não saiba o que utilizar, não há problema, pois a configuração base de ambos prevê a simulação dos endereços DNS do Google em suas interfaces loopack, permitindo "ping" para o 8.8.8.8 mesmo sem rede.
 
 ## Parte 1 - Ativando o Primeiro Link e Cliente
 Nesta primeira etapa, vamos configurar o link principal e garantir que os serviços de rede dos nossos clientes estejam funcionando. A ideia é estabelecer a conexão inicial, ativar recursos como DHCP e PPPoE para os clientes, e testar a rede para ter certeza de que tudo está operando como esperado. Assim, você terá um ambiente estável para seguir para as próximas fases do laboratório.
