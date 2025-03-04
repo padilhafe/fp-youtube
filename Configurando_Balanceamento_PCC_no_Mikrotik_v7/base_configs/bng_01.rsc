@@ -41,4 +41,4 @@ yes
 # DHCP Server
 /ip/pool/add name=pool_dhcp ranges=100.65.0.100-100.65.0.200
 /ip/dhcp-server/add address-pool=pool_dhcp disabled=no interface=ether3-CLIENTE_DHCP name=dhcp-ether3
-/ip/dhcp-server/network add address=100.65.0.0/24 gateway=100.65.0.1 netmask=24
+/ip/dhcp-server/network add address=100.65.0.0/24 dns-server=1.1.1.1,1.0.0.1 gateway=100.65.0.1 netmask=24

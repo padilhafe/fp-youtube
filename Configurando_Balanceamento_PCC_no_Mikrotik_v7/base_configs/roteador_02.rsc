@@ -4,7 +4,7 @@
 yes
 #----------------------------------------------------------
 # Configurações Gerais
-/system identity set name=rotedor_02
+/system identity set name=roteador_02
 /ip dhcp-client set 0 disabled=yes
 /tool romon set enabled=yes
 #----------------------------------------------------------
