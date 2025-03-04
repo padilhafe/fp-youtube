@@ -17,7 +17,14 @@ yes
 /interface ethernet set [ find default-name=ether2] name=ether2-CLIENTE_DEDICADO
 /ip address add address=200.200.200.1/29 interface=ether2-CLIENTE_DEDICADO
 /ipv6 address add address=2001:0db8:1::1/126 interface=ether2-CLIENTE_DEDICADO
-/ipv6 route add dst-adress=2001:0db8:1:8::/48 gateway=2001:0db8::2
+/ipv6 route add dst-address=2001:0db8:1:8::/48 gateway=2001:0db8:1::2
+
+# Configuração do Cliente Externo
+/interface ethernet set [ find default-name=ether4] name=ether4-CLIENTE_EXTERNO
+/ip address add interface=ether4-CLIENTE_EXTERNO address=172.30.250.1/24
+/ip pool add name=pool-cliente_externo ranges=172.30.250.100-172.30.250.200
+/ip dhcp-server add address-pool=pool-cliente_externo disabled=no interface=ether4-CLIENTE_EXTERNO name=dhcp-cliente_externo
+/ip dhcp-server network add address=172.30.250.0/24 gateway=172.30.250.1 netmask=24
 
 # Configuração de IPv6 para simular ping ao Google
 /interface bridge add name=lo0
