@@ -17,7 +17,7 @@ yes
 /interface ethernet set [ find default-name=ether2] name=ether2-CLIENTE_65524
 /interface vlan add interface=ether2-CLIENTE_65524 name=VLAN524-CLIENTE_65524 vlan-id=524
 /ip address add address=192.168.2.25/30 interface=VLAN524-CLIENTE_65524
-/ipv6 address add address=2001:0db8:2::1/126 interface=VLAN524-CLIENTE_65524
+/ipv6 address add address=2001:0db9:2::1/126 interface=VLAN524-CLIENTE_65524
 
 # Configurar os filtros de entrada e saída
 /routing filter add chain=RF-OUT-CLIENTE_65524 action=accept prefix=0.0.0.0/0
@@ -29,7 +29,7 @@ yes
 /routing filter add chain=RF-OUT-CLIENTE_65524_IPV6 action=accept prefix=::/0
 /routing filter add chain=RF-OUT-CLIENTE_65524_IPV6 action=discard
 
-/routing filter add chain=RF-IN-CLIENTE_65524_IPV6 action=accept prefix=2001:0db8:2:8::/48
+/routing filter add chain=RF-IN-CLIENTE_65524_IPV6 action=accept prefix=2001:0db9:b700::/48
 /routing filter add chain=RF-IN-CLIENTE_65524_IPV6 action=discard
 
 # Configuração do BGP
@@ -43,7 +43,7 @@ yes
 /routing bgp peer add name=iBGP-CLIENTE_65524_IPV6 \
 	address-families=ipv6 default-originate=always \
 	in-filter=RF-IN-CLIENTE_65524_IPV6 out-filter=RF-OUT-CLIENTE_65524_IPV6 \
-	remote-address=2001:0db8:2::2 remote-as=65524 \
+	remote-address=2001:0db9:2::2 remote-as=65524 \
 	instance=INSTANCIA-CLIENTE_65524 update-source=VLAN524-CLIENTE_65524
 
 # Configuração de IPv6 para simular ping ao Google

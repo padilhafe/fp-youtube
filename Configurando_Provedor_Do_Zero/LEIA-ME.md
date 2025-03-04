@@ -1,4 +1,6 @@
 # ATENÇÃO - EM DESENVOLVIMENTO
+# ESTE LABORATÓRIO NÃO ESTÁ CONCLUÍDO AINDA, PODE CONTER DIVERSOS ERROS DE CONFIGURAÇÃO OU LÓGICA.
+
 
 # Configurando Provedor do Zero
 
@@ -37,9 +39,9 @@ Dados para configuração do Link Dedicado
 - Rede IPv4: 200.200.200.0/29
 IPv4 lado Provedor 01: 200.200.200.1/29
 
-- Rede IPv6: 2001:0db8:1::/126 e 2001:0db8:1:8::/48
+- Rede IPv6: 2001:0db8:1::/126 e 2001:0db8:b700::/40
 IPv6 lado Provedor 01: 2001:0db8:1::1/126
-A rede 2001:0db8:1:8::/48 será entregue de forma roteada.
+A rede 2001:odb8:b700::/40 será entregue de forma roteada.
 
 Não é necessário configurar tagging de VLAN na interface que irá receber o link.
 ```
@@ -54,7 +56,7 @@ De posse destas informações, você elencou que precisa realizar as seguintes a
 - Configurar rotas blackhole para evitar loop de roteamento
 - Teste de ping para 8.8.8.8 e 8.8.4.4
 - Teste de ping para 2001:4860:4860::8888 ou 2001:4860:4860::8844
-- Realizar um segundo teste de conectividade adicionando temporariamente um endereço IP do bloco 2001:0db8:1:8::/48 em uma interface de loopback.
+- Realizar um segundo teste de conectividade adicionando temporariamente um endereço IP do bloco 2001:odb8:b700::/40 em uma interface de loopback.
 
 ### Resolução
 ```
@@ -66,14 +68,14 @@ De posse destas informações, você elencou que precisa realizar as seguintes a
 
 /ip route add gateway=200.200.200.1
 /ipv6 route add gateway=2001:0db8:1::1
-/ipv6 route add type=unreachable dst-address=2001:0db8:1:8::/48
+/ipv6 route add type=unreachable dst-address=2001:odb8:b700::/40
 
 /ping 8.8.8.8 src-address=200.200.200.2 count=1
 /ping 2001:4860:4860::8888 src-address=2001:0db8:1::2 count=1
 
 /interface bridge add name=loopback0
-/ipv6 address add interface=loopback0 address=2001:0db8:1:8::ffff/48
-/ping 2001:4860:4860::8888 src-address=2001:0db8:1:8::ffff count=1
+/ipv6 address add interface=loopback0 address=2001:odb8:b700::ffff/40
+/ping 2001:4860:4860::8888 src-address=2001:odb8:b700::ffff count=1
 
 /undo
 /undo
@@ -86,7 +88,7 @@ Bem, não é uma OLT de verdade já que não podemos emular uma. Será apenas um
 Depois de muito estudar a melhor forma de configurar as VLANs na sua rede, você decidiu fazer as seguintes configurações:
 - Vlan 100: vlan para sub-rede interna;
   - Rede IPv4: 10.100.100.0/24
-  - Rede IPv6: 2001:0db8:1:8:ffff::/64
+  - Rede IPv6: 2001:0db8:b700:1::/64
   
 - Vlan 110: vlan do /24 de gerencia das OLTs;
   - Rede IPv4: 10.110.100.0/24
@@ -98,7 +100,7 @@ Depois de muito estudar a melhor forma de configurar as VLANs na sua rede, você
   - Rede IPv4: 10.140.100.0/24
   
 - Vlan 160: comunicação IPv6 entre link_01 e bng's;
-  - Rede IPv6: 2001:0db8:1:9:ffff::/64
+  - Rede IPv6: 2001:0db8:b700:2::/64
   
 - Testar a conectividade de todos os nós com o 8.8.8.8 e no bng_01 e rede_interna adicionalmente com o 2001:4860:4860::8888
 
@@ -188,8 +190,102 @@ Depois de muito estudar a melhor forma de configurar as VLANs na sua rede, você
 ```
 
 ## Parte 3 - Configurado o servidor PPPoE, a OLT e autenticando os primeiros clientes
+Nossos clientes estão aguardando para serem ativados! Já deu tempo até do terceirizado passar a fibra, precisamos ativar para ontem nosso servidor PPPoE!
+Novamente, foi preciso decidir como será a organização de VLANs da rede e logo de cara você decidiu usar Q-in-Q para deixar as coisas mais organizadas, e economizar VLANs porque sabe que depois da primeira OLT muitas outras virão. Você também decidiu dimensionar 1024 clientes por concentrador.
 - Vlan 3001: vlan externa para a olt_01;
 - Vlan 1101 - 1300: Range para vlan interna das portas PON.
+
+Também vamos configurar o firewall para proteção dos nossos clientes.
+
+**bng_01**
+```
+/interface vlan add name VLAN3001-OLT_01 interface=ether1 vlan-id=3001
+/interface vlan add name VLAN1101-PON_01 interface=VLAN3001-OLT_01 vlan-id=1101
+/interface vlan add name VLAN1102-PON_02 interface=VLAN3001-OLT_01 vlan-id=1102
+/interface vlan add name VLAN1103-PON_03 interface=VLAN3001-OLT_01 vlan-id=1103
+/interface vlan add name VLAN1104-PON_04 interface=VLAN3001-OLT_01 vlan-id=1104
+/interface vlan add name VLAN1105-PON_05 interface=VLAN3001-OLT_01 vlan-id=1105
+/interface vlan add name VLAN1106-PON_06 interface=VLAN3001-OLT_01 vlan-id=1106
+/interface vlan add name VLAN1107-PON_07 interface=VLAN3001-OLT_01 vlan-id=1107
+/interface vlan add name VLAN1108-PON_08 interface=VLAN3001-OLT_01 vlan-id=1108
+
+/ip pool add name=pool-pppoe ranges=100.64.0.0/22
+/ipv6 pool add name=pool-pd prefix=2001:db8:b780::/46 prefix-length=56
+/ipv6 pool add name=pool-wan prefix=2804:23b0:b72f:f000::/54 prefix-length=64
+/ip route add type=blackhole dst-address=100.64.0.0/22
+/ip route add type 
+
+/ppp profile add \
+    name=profile-pppoe \
+    local-address=10.44.44.21 \
+    dns-server=8.8.8.8,8.8.4.4 \
+    change-tcp-mss=yes \
+    remote-address=pool-pppoe \
+    use-ipv6=yes \
+    use-upnp=no \
+    use-compression=no \
+    use-encryption=no
+
+/interface pppoe-server server add interface=VLAN1101-PON_01 \
+    service-name=VLAN1101-PON_01 \
+    default-profile=profile-pppoe max-mtu=1492 max-mru=1492 \
+    keepalive-timeout=10
+
+/ppp secret add name=user1 password=senha123 service=pppoe profile=profile-pppoe
+/ppp secret add name=user2 password=senha456 service=pppoe profile=profile-pppoe
+```
+
+**link_01**
+/ip route add dst-address=100.64.0.0/22 gateway=10.140.100.2
+
+**switch_core_01**
+```
+/interface bridge vlan add vlan-ids=3001 bridge=bridge01 disabled=no \
+    tagged=ether2-OLT_01,ether11-BNG_01
+```
+
+**olt_01**
+```
+/interface bridge port add interface=ether2-CLIENTE_PPPOE_01 bridge=bridge01 frame-types=admit-only-vlan-tagged hw=yes tag-stacking=yes ingress-filtering=yes pvid=3001
+/interface bridge vlan add vlan-ids=3001 bridge=bridge01 disabled=no tagged=ether1-SWITCH_CORE_01 untagged=ether2-CLIENTE_PPPOE_01
+```
+
+Um adendo, abaixo estão alguns exemplos de configuração de QinQ para diferentes OLTs:
+**vSolution - Sem Service Profile**
+```
+profile line id 203 name VLAN203-PON3
+tcont 1 name 1 dba TYPE4
+gemport 1 tcont 1 gemport_name INTERNET
+service 1 gemport 1 untag
+service-port 1 gemport 1 uservlan untag vlan 203 svlan 1466
+commit
+exit
+!
+```
+
+**ZTE**
+```
+interface gpon_olt-1/1/1
+  onu 1 type ZTE-F601.HV7.SV6 sn XXXXXXXX
+  exit
+
+interface gpon_onu-1/1/1:1
+  vport-mode manual
+  tcont 1 profile TYPE4
+  gemport 1 tcont 1
+  vport 1 map-type vlan
+  vport-map 1 1 vlan 50
+  exit
+
+interface vport-1/1/1.1:1
+  service-port 1 user-vlan 50 vlan 50 svlan 1001
+  exit
+
+pon-onu-mng gpon_onu-1/1/1:1
+  service 1 gemport 1 vlan 50
+  vlan port eth_0/1 mode tag vlan 50
+  exit
+```
 
 ## Parte 4 - CGNAT
 **Configurar as regras de NAT**
@@ -200,14 +296,16 @@ Depois de muito estudar a melhor forma de configurar as VLANs na sua rede, você
 /ip firewall nat add chain=srcnat src-address=100.64.0.192/26 out-interface=ether2  action=src-nat to-addresses=200.200.200.6
 ```
 
-## Parte 5 - Link Redundante
+## Parte 5 - Planejando o IPv6
 
-## Parte 6 - Abrindo um novo ponto de presença
+## Parte 6 - Link Redundante
 
-## Parte 7 - Adicionando failover nos servidores PPPoE
+## Parte 7 - Abrindo um novo ponto de presença
 
-## Parte 8 - Ativando o provedor 2 com seu novo ASN
+## Parte 8 - Adicionando failover nos servidores PPPoE
 
-## Parte 9 - Ativando um segundo link BGP
+## Parte 9 - Ativando o provedor 2 com seu novo ASN
 
-## Parte 10 - Você comprou uma operação e agora tem um /22 de IPv4, vamos configurar dois CGNATs
+## Parte 10 - Ativando um segundo link BGP
+
+## Parte 11 - Você comprou uma operação e agora tem um /22 de IPv4, vamos configurar dois CGNATs
