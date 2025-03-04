@@ -1,6 +1,6 @@
 # ATENÇÃO - EM DESENVOLVIMENTO
 
-# Configurando 2 Links na Mikrotik 
+# Configurando Provedor do Zero
 
 ## Informações gerais sobre o laboratório
 Este laboratório tem como objetivo guiar a configuração de uma infraestrutura de rede com redundância e alta disponibilidade. O processo é dividido em quatro partes, desde a configuração básica de um link primário até a implementação de balanceamento de carga e tolerância a falhas com múltiplos roteadores e BNGs.
@@ -187,11 +187,11 @@ Depois de muito estudar a melhor forma de configurar as VLANs na sua rede, você
     tagged=ether1-LINK_01,ether11-BNG_01
 ```
 
-
-
+## Parte 3 - Configurado o servidor PPPoE, a OLT e autenticando os primeiros clientes
 - Vlan 3001: vlan externa para a olt_01;
 - Vlan 1101 - 1300: Range para vlan interna das portas PON.
 
+## Parte 4 - CGNAT
 **Configurar as regras de NAT**
 ```
 /ip firewall nat add chain=srcnat src-address=100.64.0.0/26 out-interface=ether2 action=src-nat to-addresses=200.200.200.3
@@ -200,4 +200,14 @@ Depois de muito estudar a melhor forma de configurar as VLANs na sua rede, você
 /ip firewall nat add chain=srcnat src-address=100.64.0.192/26 out-interface=ether2  action=src-nat to-addresses=200.200.200.6
 ```
 
-**Configurar o servidor DHCP para o VPC**
+## Parte 5 - Link Redundante
+
+## Parte 6 - Abrindo um novo ponto de presença
+
+## Parte 7 - Adicionando failover nos servidores PPPoE
+
+## Parte 8 - Ativando o provedor 2 com seu novo ASN
+
+## Parte 9 - Ativando um segundo link BGP
+
+## Parte 10 - Você comprou uma operação e agora tem um /22 de IPv4, vamos configurar dois CGNATs
