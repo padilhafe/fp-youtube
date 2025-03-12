@@ -29,3 +29,5 @@
 
 /ipv6 dhcp-client add interface=pppoe-out1 pool-name=POOL-V6-01 pool-prefix-length=56 request=prefix
 /ipv6 dhcp-client add interface=pppoe-out2 pool-name=POOL-V6-02 pool-prefix-length=56 request=prefix
+
+/ipv6/address/add address=::/56 advertise=no from-pool=POOL-V6-01 interface=lo
